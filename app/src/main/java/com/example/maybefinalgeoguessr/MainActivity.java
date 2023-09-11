@@ -32,6 +32,7 @@ public class MainActivity extends Coordinates implements OnStreetViewPanoramaRea
     private StreetViewPanorama streetViewPanorama;
     private GoogleMap googleMap;
     Random random = new Random();
+    private GameLogic gameLogic;
     private LatLng randomLocation;
     double locLat;
     double locLng;
@@ -49,10 +50,13 @@ public class MainActivity extends Coordinates implements OnStreetViewPanoramaRea
 
     private int tries;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        gameLogic = new GameLogic();
 
         SupportStreetViewPanoramaFragment streetViewPanoramaFragment = (SupportStreetViewPanoramaFragment)getSupportFragmentManager().findFragmentById(R.id.googlemapstreetview);
         streetViewPanoramaFragment.getStreetViewPanoramaAsync(this);
@@ -61,6 +65,7 @@ public class MainActivity extends Coordinates implements OnStreetViewPanoramaRea
         mapFragment.getMapAsync(this);
 
         scoreCount = (EditText) findViewById(R.id.scoreCount);
+
 
     }
 
@@ -130,7 +135,7 @@ public class MainActivity extends Coordinates implements OnStreetViewPanoramaRea
                             markerPos.setVisible(false);
                             markerUser.setVisible(false);
 
-                            gameLogic(streetViewPanorama);
+                            GameLogic(streetViewPanorama);
                         }
                     }, 7000);
 
@@ -141,35 +146,6 @@ public class MainActivity extends Coordinates implements OnStreetViewPanoramaRea
         });
     }
 
-
-
-    public void gameLogic(StreetViewPanorama streetViewPanorama) {
-
-
-        float[] distance = new float[1];
-        Location.distanceBetween(streetViewLoc.getLatitude(), streetViewLoc.getLongitude(),
-                userPinLoc.getLatitude(), userPinLoc.getLongitude(), distance);
-
-        float distanceInMeters = distance[0];
-        float distanceInKm = distanceInMeters / 1000;
-        float score = 5000f * (float) Math.log10(distanceInKm + 1f) + 500f;
-        userScore = (int) score;
-        totalScore += userScore;
-
-        tries++;
-
-        if (tries % 5 == 0) {
-            totalScore = 0;
-        }
-
-        scoreCount.setText(String.valueOf(totalScore));
-
-        this.streetViewPanorama.setPosition(randomLocation, 10000, StreetViewSource.OUTDOOR);
-
-        onStreetViewPanoramaReady(this.streetViewPanorama);
-
-
-    }
 
     }
 
